@@ -1,5 +1,4 @@
 require_relative "./registers"
-require_relative "./decoder"
 
 LOAD_PROGRAM_ADDRESS = 0x200
 COMMAND_SIZE = 4
@@ -32,11 +31,12 @@ class Executor
   private
 
   def execute_current_command
-    parsed_command = Decoder.decode(current_command)
+    # Conver HEX string "620F" to array of integers [6, 2, 0 15]
+    command_hex_array = current_command.split("").map { |c| c.to_i(16) }
 
-    case parsed_command[0]
-    when :ld
-      execute_ld(parsed_command[1], parsed_command[2])
+    case command_hex_array
+    in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
+      execute_ld(x, n1 * 0x10 + n2)
     end
 
     @pc += COMMAND_SIZE

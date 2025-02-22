@@ -1,17 +1,25 @@
 require_relative "./registers"
+require_relative "./decoder"
+
+LOAD_PROGRAM_ADDRESS = 0x200
+COMMAND_SIZE = 4
 
 class Executor
   def initialize
     @registers = Registers.new
+    @memory = Array.new(0xFFF, 0)
+    @pc = LOAD_PROGRAM_ADDRESS
   end
 
-  def execute(commands)
-    commands.each do |command|
-      command_name = command[0]
-      case command_name
-      when :ld
-        cmd_ld(command[1], command[2])
-      end
+  def load_program(code)
+    code.split("").each_with_index do |v, i|
+      @memory[LOAD_PROGRAM_ADDRESS + i] = v
+    end
+  end
+
+  def execute_program
+    while current_command != "00EE"
+      execute_current_command
     end
   end
 
@@ -23,7 +31,22 @@ class Executor
 
   private
 
-  def cmd_ld(position, value)
+  def execute_current_command
+    parsed_command = Decoder.decode(current_command)
+
+    case parsed_command[0]
+    when :ld
+      execute_ld(parsed_command[1], parsed_command[2])
+    end
+
+    @pc += COMMAND_SIZE
+  end
+
+  def current_command
+    @memory[@pc..@pc + COMMAND_SIZE - 1].join
+  end
+
+  def execute_ld(position, value)
     @registers.set(position, value)
   end
 end

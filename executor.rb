@@ -17,7 +17,8 @@ class Executor
   end
 
   def execute_program
-    while current_command != "00EE"
+    # We set PC to nil when we want to exit program
+    while !@pc.nil?
       execute_current_command
     end
   end
@@ -37,9 +38,11 @@ class Executor
     case command_hex_array
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
       execute_ld(x, n1 * 0x10 + n2)
+    in [0, 0, 0xE, 0xE] # 00EE | RET | return from subroutine
+      execute_ret
     end
 
-    @pc += COMMAND_SIZE
+    @pc += COMMAND_SIZE unless @pc.nil?
   end
 
   def current_command
@@ -48,5 +51,10 @@ class Executor
 
   def execute_ld(position, value)
     @registers.set(position, value)
+  end
+
+  def execute_ret
+    # For now set PC to nil to indicate end of program
+    @pc = nil
   end
 end

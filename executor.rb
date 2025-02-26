@@ -1,4 +1,5 @@
 require_relative "./registers"
+require_relative "./display"
 
 LOAD_PROGRAM_ADDRESS = 0x200
 COMMAND_SIZE = 4
@@ -8,6 +9,7 @@ class Executor
     @registers = Registers.new
     @memory = Array.new(0xFFF, 0)
     @pc = LOAD_PROGRAM_ADDRESS
+    @display = Display.new
   end
 
   def load_program(code)
@@ -20,6 +22,7 @@ class Executor
     # We set PC to nil when we want to exit program
     while !@pc.nil?
       execute_current_command
+      render
     end
   end
 
@@ -58,5 +61,10 @@ class Executor
   def execute_ret
     # For now set PC to nil to indicate end of program
     @pc = nil
+  end
+
+  def render
+    system("clear") || system("cls")
+    puts @display.output_as_string
   end
 end

@@ -2,7 +2,7 @@ require_relative "./registers"
 require_relative "./display"
 
 LOAD_PROGRAM_ADDRESS = 0x200
-COMMAND_SIZE = 4
+COMMAND_SIZE = 2
 
 class Executor
   def initialize
@@ -14,8 +14,9 @@ class Executor
   end
 
   def load_program(code)
-    code.split("").each_with_index do |v, i|
-      @memory[LOAD_PROGRAM_ADDRESS + i] = v
+    code.split("").each_slice(2).with_index do |two_hex_characters, i|
+      numeric_value = two_hex_characters.join.to_i(16)
+      @memory[LOAD_PROGRAM_ADDRESS + i] = numeric_value
     end
   end
 
@@ -40,8 +41,7 @@ class Executor
   private
 
   def execute_current_command
-    # Conver HEX string "620F" to array of integers [6, 2, 0 15]
-    command_hex_array = current_command.split("").map { |c| c.to_i(16) }
+    command_hex_array = current_command.to_s(16).rjust(4, '0').split("").map { |v| v.to_i(16) }
 
     case command_hex_array
     in [0, 0, 0xE, 0] # 00E0 | CLS | clears the display
@@ -52,6 +52,8 @@ class Executor
       execute_ret
     in [0xA, n1, n2, n3] # ANNN | ILD | loads I register with value NNN
       execute_ild(n1 * 0x100 + n2 * 0x10 + n3)
+    in [0xD, x, y, n] # DXYN | DRW | draws sprite to display
+      execute_drw(x, y, n)
     else
       fail "Reached unknown command #{current_command} -> #{command_hex_array}"
     end
@@ -60,7 +62,9 @@ class Executor
   end
 
   def current_command
-    @memory[@pc..@pc + COMMAND_SIZE - 1].join
+    first_part = @memory[@pc]
+    second_part = @memory[@pc + 1]
+    first_part * 0x100 + second_part
   end
 
   def execute_ld(position, value)
@@ -78,6 +82,19 @@ class Executor
 
   def execute_cls
     @display.clear
+  end
+
+  def execute_drw(register_x, register_y, n)
+    sprite_content = @memory[@index_register..(@index_register + n - 1)]
+    x = @registers.get(register_x)
+    y = @registers.get(register_y)
+    sprite_content.each_with_index do |sprite_row, row_index|
+      sprite_row.to_s(2).rjust(8, '0').split("").each_with_index do |sprite_pixel, column_index|
+        if sprite_pixel == '1'
+          @display.toggle_pixel(x + column_index, y + row_index)
+        end
+      end
+    end
   end
 
   def render

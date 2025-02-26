@@ -46,19 +46,23 @@ class Executor
     case command_hex_array
     in [0, 0, 0xE, 0] # 00E0 | CLS | clears the display
       execute_cls
+      next_command
+    in [1, n1, n2, n3] # 1NNN | JP | jump to location NNN
+      execute_jp(n1 * 0x100 + n2 * 0x10 + n3)
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
       execute_ld(x, n1 * 0x10 + n2)
+      next_command
     in [0, 0, 0xE, 0xE] # 00EE | RET | return from subroutine
       execute_ret
     in [0xA, n1, n2, n3] # ANNN | ILD | loads I register with value NNN
       execute_ild(n1 * 0x100 + n2 * 0x10 + n3)
+      next_command
     in [0xD, x, y, n] # DXYN | DRW | draws sprite to display
       execute_drw(x, y, n)
+      next_command
     else
-      fail "Reached unknown command #{current_command} -> #{command_hex_array}"
+      fail "Reached unknown command #{command_hex_array.map { |n| n.to_s(16) }}"
     end
-
-    @pc += COMMAND_SIZE unless @pc.nil?
   end
 
   def current_command
@@ -67,8 +71,16 @@ class Executor
     first_part * 0x100 + second_part
   end
 
+  def next_command
+    @pc += COMMAND_SIZE
+  end
+
   def execute_ld(position, value)
     @registers.set(position, value)
+  end
+
+  def execute_jp(position)
+    @pc = position
   end
 
   def execute_ret

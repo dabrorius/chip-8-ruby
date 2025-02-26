@@ -13,6 +13,10 @@ class Display
     end.join("\n")
   end
 
+  def clear
+    initialize_screen
+  end
+
   private
 
   def initialize_screen

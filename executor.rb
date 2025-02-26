@@ -39,6 +39,8 @@ class Executor
     command_hex_array = current_command.split("").map { |c| c.to_i(16) }
 
     case command_hex_array
+    in [0, 0, 0xE, 0] # 00E0 | CLS | clears the display
+      execute_cls
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
       execute_ld(x, n1 * 0x10 + n2)
     in [0, 0, 0xE, 0xE] # 00EE | RET | return from subroutine
@@ -61,6 +63,10 @@ class Executor
   def execute_ret
     # For now set PC to nil to indicate end of program
     @pc = nil
+  end
+
+  def execute_cls
+    @display.clear
   end
 
   def render

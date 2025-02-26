@@ -40,6 +40,8 @@ class Executor
       execute_ld(x, n1 * 0x10 + n2)
     in [0, 0, 0xE, 0xE] # 00EE | RET | return from subroutine
       execute_ret
+    else
+      fail "Reached unknown command #{current_command} -> #{command_hex_array}"
     end
 
     @pc += COMMAND_SIZE unless @pc.nil?

@@ -10,6 +10,7 @@ class Executor
     @memory = Array.new(0xFFF, 0)
     @pc = LOAD_PROGRAM_ADDRESS
     @display = Display.new
+    @index_register = 0
   end
 
   def load_program(code)
@@ -32,6 +33,10 @@ class Executor
     end
   end
 
+  def inspect_index_register
+    @index_register
+  end
+
   private
 
   def execute_current_command
@@ -45,6 +50,8 @@ class Executor
       execute_ld(x, n1 * 0x10 + n2)
     in [0, 0, 0xE, 0xE] # 00EE | RET | return from subroutine
       execute_ret
+    in [0xA, n1, n2, n3] # ANNN | ILD | loads I register with value NNN
+      execute_ild(n1 * 0x100 + n2 * 0x10 + n3)
     else
       fail "Reached unknown command #{current_command} -> #{command_hex_array}"
     end
@@ -63,6 +70,10 @@ class Executor
   def execute_ret
     # For now set PC to nil to indicate end of program
     @pc = nil
+  end
+
+  def execute_ild(value)
+    @index_register = value
   end
 
   def execute_cls

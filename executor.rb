@@ -7,17 +7,15 @@ COMMAND_SIZE = 2
 class Executor
   def initialize
     @registers = Registers.new
-    @memory = Array.new(0xFFF, 0)
+    @memory = "".b
     @pc = LOAD_PROGRAM_ADDRESS
     @display = Display.new
     @index_register = 0
   end
 
   def load_program(code)
-    code.split("").each_slice(2).with_index do |two_hex_characters, i|
-      numeric_value = two_hex_characters.join.to_i(16)
-      @memory[LOAD_PROGRAM_ADDRESS + i] = numeric_value
-    end
+    @memory = @memory.ljust(LOAD_PROGRAM_ADDRESS)[..LOAD_PROGRAM_ADDRESS]
+    @memory += code
   end
 
   def execute_program
@@ -41,7 +39,7 @@ class Executor
   private
 
   def execute_current_command
-    command_hex_array = current_command.to_s(16).rjust(4, '0').split("").map { |v| v.to_i(16) }
+    command_hex_array = current_command.unpack("H*").first.chars.map { |digit| digit.to_i(16) }
 
     case command_hex_array
     in [0, 0, 0xE, 0] # 00E0 | CLS | clears the display
@@ -61,14 +59,12 @@ class Executor
       execute_drw(x, y, n)
       next_command
     else
-      fail "Reached unknown command #{command_hex_array.map { |n| n.to_s(16) }}"
+      fail "Reached unknown command #{command_hex_array}"
     end
   end
 
   def current_command
-    first_part = @memory[@pc]
-    second_part = @memory[@pc + 1]
-    first_part * 0x100 + second_part
+    first_part = @memory[@pc..@pc+1]
   end
 
   def next_command
@@ -100,7 +96,7 @@ class Executor
     sprite_content = @memory[@index_register..(@index_register + n - 1)]
     x = @registers.get(register_x)
     y = @registers.get(register_y)
-    sprite_content.each_with_index do |sprite_row, row_index|
+    sprite_content.bytes.each_with_index do |sprite_row, row_index|
       sprite_row.to_s(2).rjust(8, '0').split("").each_with_index do |sprite_pixel, column_index|
         if sprite_pixel == '1'
           @display.toggle_pixel(x + column_index, y + row_index)

@@ -50,6 +50,9 @@ class Executor
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
       execute_ld(x, n1 * 0x10 + n2)
       next_command
+    in [7, x, n1, n2] # 7XNN | ADD | adds value NN to register X
+      execute_add(x, n1 * 0x10 + n2)
+      next_command
     in [0, 0, 0xE, 0xE] # 00EE | RET | return from subroutine
       execute_ret
     in [0xA, n1, n2, n3] # ANNN | ILD | loads I register with value NNN
@@ -73,6 +76,11 @@ class Executor
 
   def execute_ld(position, value)
     @registers.set(position, value)
+  end
+
+  def execute_add(position, value)
+    current_value = @registers.get(position)
+    @registers.set(position, current_value + value)
   end
 
   def execute_jp(position)

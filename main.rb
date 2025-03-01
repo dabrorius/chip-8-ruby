@@ -1,6 +1,6 @@
 require "./executor"
 
-rom_content = File.binread("./example_roms/1-chip8-logo.ch8")
+rom_content = File.binread("./example_roms/2-ibm-logo.ch8")
 
 puts "== ROM content =="
 puts rom_content

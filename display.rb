@@ -7,6 +7,10 @@ class Display
     @pixels[row][column] = value
   end
 
+  def get_pixel(column, row)
+    @pixels[row][column]
+  end
+
   def toggle_pixel(column, row)
     @pixels[row][column] = !@pixels[row][column]
   end

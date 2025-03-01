@@ -18,6 +18,14 @@ class Executor
     @memory += code
   end
 
+  def step
+    execute_current_command
+  end
+
+  def can_step?
+    !@pc.nil?
+  end
+
   def execute_program
     # We set PC to nil when we want to exit program
     while !@pc.nil?
@@ -34,6 +42,10 @@ class Executor
 
   def inspect_index_register
     @index_register
+  end
+
+  def get_display_pixel(column, row)
+    @display.get_pixel(column, row)
   end
 
   private

@@ -70,6 +70,8 @@ class Executor
       execute_ld(x, n1 * 0x10 + n2)
     in [7, x, n1, n2] # 7XNN | ADD | adds value NN to register X
       execute_add(x, n1 * 0x10 + n2)
+    in [9, x1, x2, 0] # 9XX0 | SRNE | skip next command if register X1 is not equal to register X2
+      execute_srne(x1, x2)
     in [0xA, n1, n2, n3] # ANNN | ILD | loads I register with value NNN
       execute_ild(n1 * 0x100 + n2 * 0x10 + n3)
     in [0xD, x, y, n] # DXYN | DRW | draws sprite to display
@@ -134,6 +136,13 @@ class Executor
 
   def execute_ild(value)
     @index_register = value
+    next_command!
+  end
+
+  def execute_srne(position1, position2)
+    register_value = @registers.get(position1)
+    second_register_value = @registers.get(position2)
+    next_command! if register_value != second_register_value
     next_command!
   end
 

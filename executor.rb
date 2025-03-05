@@ -73,6 +73,8 @@ class Executor
       execute_ld(x, n1 * 0x10 + n2)
     in [7, x, n1, n2] # 7XNN | ADD | adds value NN to register X
       execute_add(x, n1 * 0x10 + n2)
+    in [8, x, y, 0] # 8XY0 | LDR | loads register X with value from register Y
+      execute_ldr(x, y)
     in [9, x1, x2, 0] # 9XX0 | SRNE | skip next command if register X1 is not equal to register X2
       execute_srne(x1, x2)
     in [0xA, n1, n2, n3] # ANNN | ILD | loads I register with value NNN
@@ -144,6 +146,12 @@ class Executor
   def execute_add(position, value)
     current_value = @registers.get(position)
     @registers.set(position, current_value + value)
+    next_command!
+  end
+
+  def execute_ldr(register_x, register_y)
+    value_y = @registers.get(register_y)
+    @registers.set(register_x, value_y)
     next_command!
   end
 

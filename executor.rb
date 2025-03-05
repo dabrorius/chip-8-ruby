@@ -62,6 +62,8 @@ class Executor
       execute_jp(n1 * 0x100 + n2 * 0x10 + n3)
     in [3, x, n1, n2] # 3XNN | SE | skip next command if register X is equal to NN
       execute_se(x, n1 * 0x10 + n2)
+    in [4, x, n1, n2] # 4XNN | SNE | skip next command if register X is not equal to NN
+      execute_se(x, n1 * 0x10 + n2)
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
       execute_ld(x, n1 * 0x10 + n2)
     in [7, x, n1, n2] # 7XNN | ADD | adds value NN to register X
@@ -101,6 +103,12 @@ class Executor
   def execute_se(position, value)
     register_value = @registers.get(position)
     next_command! if register_value == value
+    next_command!
+  end
+
+  def execute_sne(position, value)
+    register_value = @registers.get(position)
+    next_command! if register_value != value
     next_command!
   end
 

@@ -59,6 +59,8 @@ class Executor
       next_command
     in [1, n1, n2, n3] # 1NNN | JP | jump to location NNN
       execute_jp(n1 * 0x100 + n2 * 0x10 + n3)
+    in [3, x, n1, n2] # 3XNN | SE | skip next command if register X is equal to NN
+      execute_se(x, n1 * 0x10 + n2)
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
       execute_ld(x, n1 * 0x10 + n2)
       next_command
@@ -74,7 +76,7 @@ class Executor
       execute_drw(x, y, n)
       next_command
     else
-      fail "Reached unknown command #{command_hex_array}"
+      fail "Reached unknown command #{command_hex_array.map { |n| n.to_s(16).upcase }.join }"
     end
   end
 
@@ -84,6 +86,12 @@ class Executor
 
   def next_command
     @pc += COMMAND_SIZE
+  end
+
+  def execute_se(position, value)
+    register_value = @registers.get(position)
+    next_command if register_value == value
+    next_command
   end
 
   def execute_ld(position, value)

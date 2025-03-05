@@ -76,8 +76,22 @@ class Executor
       execute_add(x, n1 * 0x10 + n2)
     in [8, x, y, 0] # 8XY0 | LDR | loads register X with value from register Y
       execute_ldr(x, y)
-    in [8, x, y, 1] # 8XY1 | OR | loads register X with value from register Y
-      execute_ldr(x, y)
+    in [8, x, y, 1] # 8XY1 | OR | does bitwise OR on registers X and Y and stores result in X
+      execute_or(x, y)
+    in [8, x, y, 2] # 8XY2 | AND | does bitwise AND on registers X and Y and stores result in X
+      execute_and(x, y)
+    in [8, x, y, 3] # 8XY3 | XOR | does bitwise XOR on registers X and Y and stores result in X
+      execute_xor(x, y)
+    in [8, x, y, 4] # 8XY4 | RADD | add registers X and Y and store results in X
+      execute_radd(x, y)
+    in [8, x, y, 5] # 8XY5 | RSUB | subtract registers X and Y and store results in X
+      execute_rsub(x, y)
+    in [8, x, y, 6] # 8XY6 | SHR | does bitwise XOR on registers X and Y and stores result in X
+      execute_shr(x)
+    in [8, x, y, 7] # 8XY7 | RSUBN | subtract registers Y and X and store results in X
+      execute_rsubn(x, y)
+    in [8, x, y, 0xE] # 8XY5 | SHL | subtract registers X and Y and store results in X
+      execute_shl(x)
     in [9, x1, x2, 0] # 9XX0 | SRNE | skip next command if register X1 is not equal to register X2
       execute_srne(x1, x2)
     in [0xA, n1, n2, n3] # ANNN | ILD | loads I register with value NNN
@@ -162,6 +176,59 @@ class Executor
     value_x = @registers.get(register_x)
     value_y = @registers.get(register_y)
     @registers.set(register_x, value_x | value_y)
+    next_command!
+  end
+
+  def execute_and(register_x, register_y)
+    value_x = @registers.get(register_x)
+    value_y = @registers.get(register_y)
+    @registers.set(register_x, value_x & value_y)
+    next_command!
+  end
+
+  def execute_xor(register_x, register_y)
+    value_x = @registers.get(register_x)
+    value_y = @registers.get(register_y)
+    @registers.set(register_x, value_x ^ value_y)
+    next_command!
+  end
+
+  def execute_radd(register_x, register_y)
+    value_x = @registers.get(register_x)
+    value_y = @registers.get(register_y)
+    raw_result = value_x + value_y
+    @vf_register = raw_result > 0xFF ? 1 : 0
+    @registers.set(register_x, raw_result % 0xFF)
+    next_command!
+  end
+
+  def execute_rsub(register_x, register_y)
+    value_x = @registers.get(register_x)
+    value_y = @registers.get(register_y)
+    @vf_register = value_x > value_y
+    @registers.set(register_x, value_x - value_y)
+    next_command!
+  end
+
+  def execute_shr(register_x)
+    value_x = @registers.get(register_x)
+    @vf_register = value_x % 2
+    @registers.set(register_x, value_x / 2)
+    next_command!
+  end
+
+  def execute_rsubn(register_x, register_y)
+    value_x = @registers.get(register_x)
+    value_y = @registers.get(register_y)
+    @vf_register = value_y > value_x
+    @registers.set(register_x, value_y - value_x)
+    next_command!
+  end
+
+  def execute_shl(register_x)
+    value_x = @registers.get(register_x)
+    @vf_register = value_x * 2 > 0xFFFF
+    @registers.set(register_x, (value_x * 2) % 0xFFFF)
     next_command!
   end
 

@@ -11,7 +11,7 @@ class Chip8 < Gosu::Window
 
     self.caption = "Chip 8"
 
-    rom_content = File.binread("./example_roms/2-ibm-logo.ch8")
+    rom_content = File.binread("./example_roms/3-corax.ch8")
 
     @executor = Executor.new
     @executor.load_program(rom_content)

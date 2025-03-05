@@ -11,6 +11,7 @@ class Executor
     @pc = LOAD_PROGRAM_ADDRESS
     @display = Display.new
     @index_register = 0
+    @stack_pointer = []
   end
 
   def load_program(code)
@@ -60,6 +61,8 @@ class Executor
       execute_cls
     in [1, n1, n2, n3] # 1NNN | JP | jump to location NNN
       execute_jp(n1 * 0x100 + n2 * 0x10 + n3)
+    in [2, n1, n2, n3] # 2NNN | CALL | all subroutine at location NNN
+      execute_call(n1 * 0x100 + n2 * 0x10 + n3)
     in [3, x, n1, n2] # 3XNN | SE | skip next command if register X is equal to NN
       execute_se(x, n1 * 0x10 + n2)
     in [4, x, n1, n2] # 4XNN | SNE | skip next command if register X is not equal to NN
@@ -92,7 +95,12 @@ class Executor
   # Commands implementation
   def execute_ret
     # For now set PC to nil to indicate end of program
-    @pc = nil
+    if @stack_pointer.any?
+      @pc = @stack_pointer.pop
+      next_command!
+    else
+      @pc = nil
+    end
   end
 
   def execute_cls
@@ -101,6 +109,11 @@ class Executor
   end
 
   def execute_jp(position)
+    @pc = position
+  end
+
+  def execute_call(position)
+    @stack_pointer.push(@pc)
     @pc = position
   end
 

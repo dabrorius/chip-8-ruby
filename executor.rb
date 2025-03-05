@@ -12,6 +12,7 @@ class Executor
     @display = Display.new
     @index_register = 0
     @stack_pointer = []
+    @vf_register = 0
   end
 
   def load_program(code)
@@ -180,13 +181,16 @@ class Executor
     sprite_content = @memory[@index_register..(@index_register + n - 1)]
     x = @registers.get(register_x)
     y = @registers.get(register_y)
+    is_any_erased = false
     sprite_content.bytes.each_with_index do |sprite_row, row_index|
       sprite_row.to_s(2).rjust(8, '0').split("").each_with_index do |sprite_pixel, column_index|
         if sprite_pixel == '1'
-          @display.toggle_pixel(x + column_index, y + row_index)
+          is_erased = @display.toggle_pixel(x + column_index, y + row_index)
+          is_any_erased = is_any_erased || is_erased
         end
       end
     end
+    @vf_register = is_any_erased
     next_command!
   end
 

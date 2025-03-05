@@ -12,7 +12,10 @@ class Display
   end
 
   def toggle_pixel(column, row)
-    @pixels[row][column] = !@pixels[row][column]
+    original_value = @pixels[row][column]
+    @pixels[row][column] = !original_value
+
+    original_value # Indicates if pixel was erased
   end
 
   def output_as_string

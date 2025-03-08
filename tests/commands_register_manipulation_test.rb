@@ -41,4 +41,23 @@ class RegistersTest < Minitest::Test
     assert_equal 0xCC, executor.registers.get(0)
     assert_equal 0xDD, executor.registers.get(1)
   end
+
+  def test_execute_wdi
+    executor = TestExecutor.new(memory: "\xAA\xBB\xCC\xDD\xEE".b, index_register: 2)
+
+    executor.registers.set(0, 0x0F)
+    executor.registers.set(1, 0xAD)
+    executor.execute_wdi(1)
+
+    assert_equal "\xAA\xBB\x0F\xAD\xEE".b, executor.memory
+  end
+
+  def test_execute_bcd
+    executor = TestExecutor.new(memory: "\xAA\xBB\xCC\xDD\xEE".b, index_register: 1)
+
+    executor.registers.set(1, 125)
+    executor.execute_bcd(1)
+
+    assert_equal "\xAA\x01\x02\x05\xEE".b, executor.memory
+  end
 end

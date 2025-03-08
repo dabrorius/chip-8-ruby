@@ -18,8 +18,8 @@ module CommandParser
 
     private
 
-    def call(position, value)
-      register_value = @executor.registers.get(position)
+    def call(register, value)
+      register_value = @executor.registers.get(register)
       @executor.pc += Const::COMMAND_SIZE if register_value != value
       @executor.pc += Const::COMMAND_SIZE
     end

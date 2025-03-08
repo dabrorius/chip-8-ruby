@@ -2,7 +2,7 @@ require_relative "../const"
 
 module CommandParser
   # Format: 4xnn
-  # Skips next command if register Vx is not equal to literal vlaue NN
+  # Skips next command if register Vx is not equal to literal value NN
   class SkipIfLiteralNotEqual
     def initialize(executor)
       @executor = executor

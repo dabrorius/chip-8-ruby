@@ -14,7 +14,7 @@ module CommandParser
       command_parser.match_and_call([4, 1, 2, 2])
       assert_equal 0x202, executor.pc
 
-      # When values are not equal it skips a command command
+      # When values are not equal it skips a command
       command_parser.match_and_call([4, 1, 2, 4])
       assert_equal 0x206, executor.pc
     end

@@ -121,7 +121,7 @@ class Executor
         parser.match_and_call(command_hex_array)
       end
 
-      unless parser_results.all? false
+      if parser_results.all? { |e| e == false }
         fail "Reached unknown command #{command_hex_array.map { |n| n.to_s(16).upcase }.join }"
       end
     end

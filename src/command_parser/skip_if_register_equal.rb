@@ -11,7 +11,7 @@ module CommandParser
     def match_and_call(command_hex_array)
       if command_hex_array in [5, x, y, 0]
         call(x, y)
-        true
+        return true
       end
       false
     end

@@ -1,3 +1,5 @@
+require_relative "../consts"
+
 # Expects following instance variables:
 #
 # @pc - program counter
@@ -17,8 +19,7 @@ module Commands
     def execute_ret
       # For now set PC to nil to indicate end of program
       if @stack_pointer.any?
-        @pc = @stack_pointer.pop
-        next_command!
+        @pc = @stack_pointer.pop + Consts::COMMAND_SIZE
       else
         @pc = nil
       end

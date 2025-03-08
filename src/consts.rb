@@ -1,0 +1,4 @@
+module Consts
+  LOAD_PROGRAM_ADDRESS = 0x200
+  COMMAND_SIZE = 2
+end

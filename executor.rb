@@ -1,14 +1,15 @@
 require_relative "./registers"
 require_relative "./display"
-
-LOAD_PROGRAM_ADDRESS = 0x200
-COMMAND_SIZE = 2
+require_relative "./src/consts"
+require_relative "./src/commands/navigation"
 
 class Executor
+  include Commands::Navigation
+
   def initialize
     @registers = Registers.new
     @memory = "".b
-    @pc = LOAD_PROGRAM_ADDRESS
+    @pc = Consts::LOAD_PROGRAM_ADDRESS
     @display = Display.new
     @index_register = 0
     @stack_pointer = []
@@ -16,7 +17,7 @@ class Executor
   end
 
   def load_program(code)
-    @memory = @memory.ljust(LOAD_PROGRAM_ADDRESS)[..LOAD_PROGRAM_ADDRESS]
+    @memory = @memory.ljust(Consts::LOAD_PROGRAM_ADDRESS)[..Consts::LOAD_PROGRAM_ADDRESS]
     @memory += code
   end
 
@@ -108,32 +109,12 @@ class Executor
   end
 
   def next_command!
-    @pc += COMMAND_SIZE
-  end
-
-  # Commands implementation
-  def execute_ret
-    # For now set PC to nil to indicate end of program
-    if @stack_pointer.any?
-      @pc = @stack_pointer.pop
-      next_command!
-    else
-      @pc = nil
-    end
+    @pc += Consts::COMMAND_SIZE
   end
 
   def execute_cls
     @display.clear
     next_command!
-  end
-
-  def execute_jp(position)
-    @pc = position
-  end
-
-  def execute_call(position)
-    @stack_pointer.push(@pc)
-    @pc = position
   end
 
   def execute_se(position, value)

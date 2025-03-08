@@ -9,7 +9,7 @@ module CommandParser
     end
 
     def match_and_call(command_hex_array)
-      if command_hex_array in [4, x, n1, n2]
+      if command_hex_array in [3, x, n1, n2]
         call(x, n1 * 0x10 + n2)
         true
       end
@@ -18,8 +18,8 @@ module CommandParser
 
     private
 
-    def call(position, value)
-      register_value = @executor.registers.get(position)
+    def call(register, value)
+      register_value = @executor.registers.get(register)
       @executor.pc += Const::COMMAND_SIZE if register_value == value
       @executor.pc += Const::COMMAND_SIZE
     end

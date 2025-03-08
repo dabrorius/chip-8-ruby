@@ -11,11 +11,11 @@ module CommandParser
       # When values are equal it skips a command
       executor.registers.set(1, 0x22)
       assert_equal 0x200, executor.pc
-      command_parser.match_and_call([4, 1, 2, 2])
+      command_parser.match_and_call([3, 1, 2, 2])
       assert_equal 0x204, executor.pc
 
       # When values are not equal it moves to next command
-      command_parser.match_and_call([4, 1, 2, 4])
+      command_parser.match_and_call([3, 1, 2, 4])
       assert_equal 0x206, executor.pc
     end
   end

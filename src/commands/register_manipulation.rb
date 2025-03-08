@@ -114,9 +114,16 @@ module Commands
 
       puts "GOT #{register_value} => #{hundreds} #{tens} #{ones}"
 
-      @memory[index_register] = ["0#{hundreds.to_s(16)}"].pack("H*")
-      @memory[index_register + 1] = ["0#{tens.to_s(16)}"].pack("H*")
-      @memory[index_register + 2] = ["0#{ones.to_s(16)}"].pack("H*")
+      @memory[@index_register] = ["0#{hundreds.to_s(16)}"].pack("H*")
+      @memory[@index_register + 1] = ["0#{tens.to_s(16)}"].pack("H*")
+      @memory[@index_register + 2] = ["0#{ones.to_s(16)}"].pack("H*")
+
+      @pc += Const::COMMAND_SIZE
+    end
+
+    def execute_iadd(register_x)
+      value_x = @registers.get(register_x)
+      @index_register = (@index_register + value_x) % 0x10000
 
       @pc += Const::COMMAND_SIZE
     end

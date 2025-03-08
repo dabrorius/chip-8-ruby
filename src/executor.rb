@@ -107,6 +107,10 @@ class Executor
       execute_wdi(x)
     in [0xF, x, 6, 5] # FX65 | LDI | loads registers V0 to Vx with values from memory location in I register
       execute_ldi(x)
+    in [0xF, x, 3, 3] # FX33 | BCD | loads registers V0 to Vx with values from memory location in I register
+      execute_bcd(x)
+    in [0xF, x, 1, 0xE] # FX1E | IADD | adds I register and Vx and stores to I register
+      execute_iadd(x)
     else
       fail "Reached unknown command #{command_hex_array.map { |n| n.to_s(16).upcase }.join }"
     end

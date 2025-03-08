@@ -5,6 +5,7 @@ require_relative "../const"
 # @pc - program counter
 # @registers - Instance of Registers class
 # @vf_register
+# @index_register
 #
 module Commands
   module RegisterManipulation
@@ -82,6 +83,15 @@ module Commands
       value_x = @registers.get(register_x)
       @vf_register = value_x * 2 > 0xFFFF
       @registers.set(register_x, (value_x * 2) % 0xFFFF)
+      @pc += Const::COMMAND_SIZE
+    end
+
+    def execute_ldi(last_register)
+      (0..last_register).each do |n|
+        memory_position = @index_register + n
+        integer_value_at_position = @memory[memory_position].ord
+        @registers.set(n, integer_value_at_position)
+      end
       @pc += Const::COMMAND_SIZE
     end
   end

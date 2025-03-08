@@ -103,6 +103,8 @@ class Executor
       execute_ild(n1 * 0x100 + n2 * 0x10 + n3)
     in [0xD, x, y, n] # DXYN | DRW | draws sprite to display
       execute_drw(x, y, n)
+    in [0xF, x, 6, 5] # FX65 | LDI | loads registers V0 to Vx with values from memory location in I register
+      execute_ldi(x)
     else
       fail "Reached unknown command #{command_hex_array.map { |n| n.to_s(16).upcase }.join }"
     end

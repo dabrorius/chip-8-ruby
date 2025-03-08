@@ -1,15 +1,17 @@
 require_relative "./registers"
 require_relative "./display"
-require_relative "./src/consts"
+require_relative "./src/const"
 require_relative "./src/commands/navigation"
+require_relative "./src/commands/conditionals"
 
 class Executor
   include Commands::Navigation
+  include Commands::Conditionals
 
   def initialize
     @registers = Registers.new
     @memory = "".b
-    @pc = Consts::LOAD_PROGRAM_ADDRESS
+    @pc = Const::LOAD_PROGRAM_ADDRESS
     @display = Display.new
     @index_register = 0
     @stack_pointer = []
@@ -17,7 +19,7 @@ class Executor
   end
 
   def load_program(code)
-    @memory = @memory.ljust(Consts::LOAD_PROGRAM_ADDRESS)[..Consts::LOAD_PROGRAM_ADDRESS]
+    @memory = @memory.ljust(Const::LOAD_PROGRAM_ADDRESS)[..Const::LOAD_PROGRAM_ADDRESS]
     @memory += code
   end
 
@@ -68,7 +70,7 @@ class Executor
     in [3, x, n1, n2] # 3XNN | SE | skip next command if register X is equal to NN
       execute_se(x, n1 * 0x10 + n2)
     in [4, x, n1, n2] # 4XNN | SNE | skip next command if register X is not equal to NN
-      execute_se(x, n1 * 0x10 + n2)
+      execute_sne(x, n1 * 0x10 + n2)
     in [5, x1, x2, 0] # 5XX0 | SRE | skip next command if register X1 is equal to register X2
       execute_sre(x1, x2)
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
@@ -109,30 +111,11 @@ class Executor
   end
 
   def next_command!
-    @pc += Consts::COMMAND_SIZE
+    @pc += Const::COMMAND_SIZE
   end
 
   def execute_cls
     @display.clear
-    next_command!
-  end
-
-  def execute_se(position, value)
-    register_value = @registers.get(position)
-    next_command! if register_value == value
-    next_command!
-  end
-
-  def execute_sne(position, value)
-    register_value = @registers.get(position)
-    next_command! if register_value != value
-    next_command!
-  end
-
-  def execute_sre(position1, position2)
-    register_value = @registers.get(position1)
-    second_register_value = @registers.get(position2)
-    next_command! if register_value == second_register_value
     next_command!
   end
 

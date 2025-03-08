@@ -4,6 +4,7 @@ require_relative "./const"
 require_relative "./commands/navigation"
 require_relative "./commands/register_manipulation"
 
+require_relative "./command_parser/clear_display"
 require_relative "./command_parser/skip_if_literal_equal"
 require_relative "./command_parser/skip_if_literal_not_equal"
 require_relative "./command_parser/skip_if_register_equal"
@@ -13,7 +14,7 @@ class Executor
   include Commands::Navigation
   include Commands::RegisterManipulation
 
-  attr_reader :registers
+  attr_reader :registers, :display
   attr_accessor :pc
 
   def initialize
@@ -26,6 +27,7 @@ class Executor
     @vf_register = 0
 
     @command_parsers = [
+      CommandParser::ClearDisplay.new(self),
       CommandParser::SkipIfLiteralEqual.new(self),
       CommandParser::SkipIfLiteralNotEqual.new(self),
       CommandParser::SkipIfRegisterEqual.new(self),
@@ -76,8 +78,6 @@ class Executor
     case command_hex_array
     in [0, 0, 0xE, 0xE] # 00EE | RET | return from subroutine
       execute_ret
-    in [0, 0, 0xE, 0] # 00E0 | CLS | clears the display
-      execute_cls
     in [1, n1, n2, n3] # 1NNN | JP | jump to location NNN
       execute_jp(n1 * 0x100 + n2 * 0x10 + n3)
     in [2, n1, n2, n3] # 2NNN | CALL | all subroutine at location NNN
@@ -133,11 +133,6 @@ class Executor
 
   def next_command!
     @pc += Const::COMMAND_SIZE
-  end
-
-  def execute_cls
-    @display.clear
-    next_command!
   end
 
   def execute_ild(value)

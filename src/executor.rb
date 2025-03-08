@@ -4,11 +4,7 @@ require_relative "./const"
 require_relative "./commands/navigation"
 require_relative "./commands/register_manipulation"
 
-require_relative "./command_parser/clear_display"
-require_relative "./command_parser/skip_if_literal_equal"
-require_relative "./command_parser/skip_if_literal_not_equal"
-require_relative "./command_parser/skip_if_register_equal"
-require_relative "./command_parser/skip_if_register_not_equal"
+COMMAND_PARSERS_PATH = "./command_parser/".freeze
 
 class Executor
   include Commands::Navigation
@@ -26,13 +22,15 @@ class Executor
     @stack_pointer = []
     @vf_register = 0
 
-    @command_parsers = [
-      CommandParser::ClearDisplay.new(self),
-      CommandParser::SkipIfLiteralEqual.new(self),
-      CommandParser::SkipIfLiteralNotEqual.new(self),
-      CommandParser::SkipIfRegisterEqual.new(self),
-      CommandParser::SkipIfRegisterNotEqual.new(self)
-    ]
+    # Dynamically load all command parsers
+    # Assume each file contains a class with camel case version of the file name
+    command_parser_files = Dir.glob(File.join(__dir__, COMMAND_PARSERS_PATH, '*.rb'))
+    @command_parsers = command_parser_files.map do |command_parser_path|
+      require_relative command_parser_path
+      file_name = command_parser_path.split("/").last
+      camel_case_name = file_name.gsub(".rb", "").split("_").map(&:capitalize).join
+      Object.const_get("CommandParser::#{camel_case_name}").new(self)
+    end
   end
 
   def load_program(code)

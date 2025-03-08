@@ -7,6 +7,7 @@ require_relative "./commands/register_manipulation"
 require_relative "./command_parser/skip_if_literal_equal"
 require_relative "./command_parser/skip_if_literal_not_equal"
 require_relative "./command_parser/skip_if_register_equal"
+require_relative "./command_parser/skip_if_register_not_equal"
 
 class Executor
   include Commands::Navigation
@@ -27,7 +28,8 @@ class Executor
     @command_parsers = [
       CommandParser::SkipIfLiteralEqual.new(self),
       CommandParser::SkipIfLiteralNotEqual.new(self),
-      CommandParser::SkipIfRegisterEqual.new(self)
+      CommandParser::SkipIfRegisterEqual.new(self),
+      CommandParser::SkipIfRegisterNotEqual.new(self)
     ]
   end
 
@@ -102,8 +104,6 @@ class Executor
       execute_rsubn(x, y)
     in [8, x, y, 0xE] # 8XY5 | SHL | subtract registers X and Y and store results in X
       execute_shl(x)
-    in [9, x1, x2, 0] # 9XX0 | SRNE | skip next command if register X1 is not equal to register X2
-      execute_srne(x1, x2)
     in [0xA, n1, n2, n3] # ANNN | ILD | loads I register with value NNN
       execute_ild(n1 * 0x100 + n2 * 0x10 + n3)
     in [0xD, x, y, n] # DXYN | DRW | draws sprite to display
@@ -142,13 +142,6 @@ class Executor
 
   def execute_ild(value)
     @index_register = value
-    next_command!
-  end
-
-  def execute_srne(position1, position2)
-    register_value = @registers.get(position1)
-    second_register_value = @registers.get(position2)
-    next_command! if register_value != second_register_value
     next_command!
   end
 

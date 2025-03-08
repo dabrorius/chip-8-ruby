@@ -1,5 +1,5 @@
 require "minitest/autorun"
-require_relative "../executor"
+require_relative "../src/executor"
 
 class ExecutorTest < Minitest::Test
   def test_executing_minimal_sample

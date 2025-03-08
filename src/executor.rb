@@ -5,10 +5,15 @@ require_relative "./commands/navigation"
 require_relative "./commands/conditionals"
 require_relative "./commands/register_manipulation"
 
+require_relative "./command_parser/skip_if_literal_not_equal"
+
 class Executor
   include Commands::Navigation
   include Commands::Conditionals
   include Commands::RegisterManipulation
+
+  attr_reader :registers
+  attr_accessor :pc
 
   def initialize
     @registers = Registers.new
@@ -18,6 +23,10 @@ class Executor
     @index_register = 0
     @stack_pointer = []
     @vf_register = 0
+
+    @command_parsers = [
+      CommandParser::SkipIfLiteralNotEqual.new(self)
+    ]
   end
 
   def load_program(code)
@@ -71,8 +80,6 @@ class Executor
       execute_call(n1 * 0x100 + n2 * 0x10 + n3)
     in [3, x, n1, n2] # 3XNN | SE | skip next command if register X is equal to NN
       execute_se(x, n1 * 0x10 + n2)
-    in [4, x, n1, n2] # 4XNN | SNE | skip next command if register X is not equal to NN
-      execute_sne(x, n1 * 0x10 + n2)
     in [5, x1, x2, 0] # 5XX0 | SRE | skip next command if register X1 is equal to register X2
       execute_sre(x1, x2)
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
@@ -112,7 +119,13 @@ class Executor
     in [0xF, x, 1, 0xE] # FX1E | IADD | adds I register and Vx and stores to I register
       execute_iadd(x)
     else
-      fail "Reached unknown command #{command_hex_array.map { |n| n.to_s(16).upcase }.join }"
+      parser_results = @command_parsers.map do |parser|
+        parser.match_and_call(command_hex_array)
+      end
+
+      unless parser_results.all? false
+        fail "Reached unknown command #{command_hex_array.map { |n| n.to_s(16).upcase }.join }"
+      end
     end
   end
 

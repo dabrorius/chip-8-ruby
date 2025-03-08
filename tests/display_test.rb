@@ -1,5 +1,5 @@
 require "minitest/autorun"
-require_relative "../display"
+require_relative "../src/display"
 
 class DisplayTest < Minitest::Test
   def test_initialization

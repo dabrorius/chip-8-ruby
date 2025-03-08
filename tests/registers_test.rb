@@ -1,5 +1,5 @@
 require "minitest/autorun"
-require_relative "../registers.rb"
+require_relative "../src/registers.rb"
 
 class RegistersTest < Minitest::Test
   def test_setting_and_getting

@@ -1,5 +1,5 @@
 require 'gosu'
-require "./executor"
+require "./src/executor"
 
 PIXEL_SIZE = 8
 PIXELS_X = 64

@@ -1,9 +1,9 @@
 require_relative "./registers"
 require_relative "./display"
-require_relative "./src/const"
-require_relative "./src/commands/navigation"
-require_relative "./src/commands/conditionals"
-require_relative "./src/commands/register_manipulation"
+require_relative "./const"
+require_relative "./commands/navigation"
+require_relative "./commands/conditionals"
+require_relative "./commands/register_manipulation"
 
 class Executor
   include Commands::Navigation

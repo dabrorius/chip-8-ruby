@@ -3,10 +3,12 @@ require_relative "./display"
 require_relative "./src/const"
 require_relative "./src/commands/navigation"
 require_relative "./src/commands/conditionals"
+require_relative "./src/commands/register_manipulation"
 
 class Executor
   include Commands::Navigation
   include Commands::Conditionals
+  include Commands::RegisterManipulation
 
   def initialize
     @registers = Registers.new
@@ -121,12 +123,6 @@ class Executor
 
   def execute_ld(position, value)
     @registers.set(position, value)
-    next_command!
-  end
-
-  def execute_add(position, value)
-    current_value = @registers.get(position)
-    @registers.set(position, current_value + value)
     next_command!
   end
 

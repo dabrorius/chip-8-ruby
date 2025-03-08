@@ -5,6 +5,7 @@ require_relative "./commands/navigation"
 require_relative "./commands/conditionals"
 require_relative "./commands/register_manipulation"
 
+require_relative "./command_parser/skip_if_literal_equal"
 require_relative "./command_parser/skip_if_literal_not_equal"
 
 class Executor
@@ -25,6 +26,7 @@ class Executor
     @vf_register = 0
 
     @command_parsers = [
+      CommandParser::SkipIfLiteralEqual.new(self),
       CommandParser::SkipIfLiteralNotEqual.new(self)
     ]
   end
@@ -78,8 +80,6 @@ class Executor
       execute_jp(n1 * 0x100 + n2 * 0x10 + n3)
     in [2, n1, n2, n3] # 2NNN | CALL | all subroutine at location NNN
       execute_call(n1 * 0x100 + n2 * 0x10 + n3)
-    in [3, x, n1, n2] # 3XNN | SE | skip next command if register X is equal to NN
-      execute_se(x, n1 * 0x10 + n2)
     in [5, x1, x2, 0] # 5XX0 | SRE | skip next command if register X1 is equal to register X2
       execute_sre(x1, x2)
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN

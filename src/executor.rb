@@ -1,13 +1,11 @@
 require_relative "./registers"
 require_relative "./display"
 require_relative "./const"
-require_relative "./commands/navigation"
 require_relative "./commands/register_manipulation"
 
 INSTRUCTION_PARSERS_PATH = "./instruction_parser/".freeze
 
 class Executor
-  include Commands::Navigation
   include Commands::RegisterManipulation
 
   attr_reader :registers, :display
@@ -74,8 +72,6 @@ class Executor
     command_hex_array = current_command.unpack("H*").first.chars.map { |digit| digit.to_i(16) }
 
     case command_hex_array
-    in [0, 0, 0xE, 0xE] # 00EE | RET | return from subroutine
-      execute_ret
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
       execute_ld(x, n1 * 0x10 + n2)
     in [7, x, n1, n2] # 7XNN | ADD | adds value NN to register X

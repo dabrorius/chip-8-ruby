@@ -9,12 +9,6 @@ require_relative "../const"
 #
 module Commands
   module RegisterManipulation
-    def execute_add(position, value)
-      current_value = @registers.get(position)
-      @registers.set(position, current_value + value)
-      @pc += Const::COMMAND_SIZE
-    end
-
     def execute_ld(position, value)
       @registers.set(position, value)
       @pc += Const::COMMAND_SIZE

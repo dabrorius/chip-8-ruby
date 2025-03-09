@@ -72,8 +72,6 @@ class Executor
     command_hex_array = current_command.unpack("H*").first.chars.map { |digit| digit.to_i(16) }
 
     case command_hex_array
-    in [8, x, y, 0] # 8XY0 | LDR | loads register X with value from register Y
-      execute_ldr(x, y)
     in [8, x, y, 1] # 8XY1 | OR | does bitwise OR on registers X and Y and stores result in X
       execute_or(x, y)
     in [8, x, y, 2] # 8XY2 | AND | does bitwise AND on registers X and Y and stores result in X

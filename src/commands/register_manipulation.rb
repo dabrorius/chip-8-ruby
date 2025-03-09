@@ -9,12 +9,6 @@ require_relative "../const"
 #
 module Commands
   module RegisterManipulation
-    def execute_ldr(register_x, register_y)
-      value_y = @registers.get(register_y)
-      @registers.set(register_x, value_y)
-      @pc += Const::COMMAND_SIZE
-    end
-
     def execute_or(register_x, register_y)
       value_x = @registers.get(register_x)
       value_y = @registers.get(register_y)

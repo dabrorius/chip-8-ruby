@@ -9,20 +9,6 @@ require_relative "../const"
 #
 module Commands
   module RegisterManipulation
-    def execute_and(register_x, register_y)
-      value_x = @registers.get(register_x)
-      value_y = @registers.get(register_y)
-      @registers.set(register_x, value_x & value_y)
-      @pc += Const::COMMAND_SIZE
-    end
-
-    def execute_xor(register_x, register_y)
-      value_x = @registers.get(register_x)
-      value_y = @registers.get(register_y)
-      @registers.set(register_x, value_x ^ value_y)
-      @pc += Const::COMMAND_SIZE
-    end
-
     def execute_radd(register_x, register_y)
       value_x = @registers.get(register_x)
       value_y = @registers.get(register_y)

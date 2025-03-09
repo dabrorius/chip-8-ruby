@@ -72,10 +72,6 @@ class Executor
     command_hex_array = current_command.unpack("H*").first.chars.map { |digit| digit.to_i(16) }
 
     case command_hex_array
-    in [8, x, y, 2] # 8XY2 | AND | does bitwise AND on registers X and Y and stores result in X
-      execute_and(x, y)
-    in [8, x, y, 3] # 8XY3 | XOR | does bitwise XOR on registers X and Y and stores result in X
-      execute_xor(x, y)
     in [8, x, y, 4] # 8XY4 | RADD | add registers X and Y and store results in X
       execute_radd(x, y)
     in [8, x, y, 5] # 8XY5 | RSUB | subtract registers X and Y and store results in X

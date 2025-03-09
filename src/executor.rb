@@ -94,8 +94,6 @@ class Executor
       execute_ldi(x)
     in [0xF, x, 3, 3] # FX33 | BCD | loads registers V0 to Vx with values from memory location in I register
       execute_bcd(x)
-    in [0xF, x, 1, 0xE] # FX1E | IADD | adds I register and Vx and stores to I register
-      execute_iadd(x)
     else
       parser_results = @command_parsers.map do |parser|
         parser.match_and_call(command_hex_array)

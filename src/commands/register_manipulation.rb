@@ -103,12 +103,5 @@ module Commands
 
       @pc += Const::COMMAND_SIZE
     end
-
-    def execute_iadd(register_x)
-      value_x = @registers.get(register_x)
-      @index_register = (@index_register + value_x) % 0x10000
-
-      @pc += Const::COMMAND_SIZE
-    end
   end
 end

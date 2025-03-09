@@ -11,7 +11,7 @@ class Executor
   include Commands::RegisterManipulation
 
   attr_reader :registers, :display
-  attr_accessor :pc
+  attr_accessor :pc, :index_register, :vf_register, :memory
 
   def initialize
     @registers = Registers.new
@@ -104,8 +104,6 @@ class Executor
       execute_shl(x)
     in [0xA, n1, n2, n3] # ANNN | ILD | loads I register with value NNN
       execute_ild(n1 * 0x100 + n2 * 0x10 + n3)
-    in [0xD, x, y, n] # DXYN | DRW | draws sprite to display
-      execute_drw(x, y, n)
     in [0xF, x, 5, 5] # FX55 | WDI | writes registers V0 to Vx to memory locations starting at I register
       execute_wdi(x)
     in [0xF, x, 6, 5] # FX65 | LDI | loads registers V0 to Vx with values from memory location in I register
@@ -135,23 +133,6 @@ class Executor
 
   def execute_ild(value)
     @index_register = value
-    next_command!
-  end
-
-  def execute_drw(register_x, register_y, n)
-    sprite_content = @memory[@index_register..(@index_register + n - 1)]
-    x = @registers.get(register_x)
-    y = @registers.get(register_y)
-    is_any_erased = false
-    sprite_content.bytes.each_with_index do |sprite_row, row_index|
-      sprite_row.to_s(2).rjust(8, '0').split("").each_with_index do |sprite_pixel, column_index|
-        if sprite_pixel == '1'
-          is_erased = @display.toggle_pixel(x + column_index, y + row_index)
-          is_any_erased = is_any_erased || is_erased
-        end
-      end
-    end
-    @vf_register = is_any_erased
     next_command!
   end
 

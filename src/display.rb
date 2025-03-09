@@ -15,7 +15,7 @@ class Display
     original_value = @pixels[row][column]
     @pixels[row][column] = !original_value
 
-    original_value # Indicates if pixel was erased
+    original_value ? 1 : 0 # Indicates if pixel was erased
   end
 
   def output_as_string

@@ -102,8 +102,6 @@ class Executor
       execute_rsubn(x, y)
     in [8, x, y, 0xE] # 8XY5 | SHL | subtract registers X and Y and store results in X
       execute_shl(x)
-    in [0xA, n1, n2, n3] # ANNN | ILD | loads I register with value NNN
-      execute_ild(n1 * 0x100 + n2 * 0x10 + n3)
     in [0xF, x, 5, 5] # FX55 | WDI | writes registers V0 to Vx to memory locations starting at I register
       execute_wdi(x)
     in [0xF, x, 6, 5] # FX65 | LDI | loads registers V0 to Vx with values from memory location in I register
@@ -129,11 +127,6 @@ class Executor
 
   def next_command!
     @pc += Const::COMMAND_SIZE
-  end
-
-  def execute_ild(value)
-    @index_register = value
-    next_command!
   end
 
   def render

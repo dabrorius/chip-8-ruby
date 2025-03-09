@@ -76,8 +76,6 @@ class Executor
     case command_hex_array
     in [0, 0, 0xE, 0xE] # 00EE | RET | return from subroutine
       execute_ret
-    in [1, n1, n2, n3] # 1NNN | JP | jump to location NNN
-      execute_jp(n1 * 0x100 + n2 * 0x10 + n3)
     in [2, n1, n2, n3] # 2NNN | CALL | all subroutine at location NNN
       execute_call(n1 * 0x100 + n2 * 0x10 + n3)
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN

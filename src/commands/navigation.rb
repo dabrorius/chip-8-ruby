@@ -7,10 +7,6 @@ require_relative "../const"
 #
 module Commands
   module Navigation
-    def execute_jp(position)
-      @pc = position
-    end
-
     def execute_call(position)
       @stack_pointer.push(@pc)
       @pc = position

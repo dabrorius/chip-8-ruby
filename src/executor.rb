@@ -72,10 +72,6 @@ class Executor
     command_hex_array = current_command.unpack("H*").first.chars.map { |digit| digit.to_i(16) }
 
     case command_hex_array
-    in [8, x, y, 4] # 8XY4 | RADD | add registers X and Y and store results in X
-      execute_radd(x, y)
-    in [8, x, y, 5] # 8XY5 | RSUB | subtract registers X and Y and store results in X
-      execute_rsub(x, y)
     in [8, x, y, 7] # 8XY7 | RSUBN | subtract registers Y and X and store results in X
       execute_rsubn(x, y)
     in [0xF, x, 5, 5] # FX55 | WDI | writes registers V0 to Vx to memory locations starting at I register

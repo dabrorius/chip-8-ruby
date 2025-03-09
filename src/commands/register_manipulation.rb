@@ -26,25 +26,11 @@ module Commands
       @pc += Const::COMMAND_SIZE
     end
 
-    def execute_shr(register_x)
-      value_x = @registers.get(register_x)
-      @vf_register = value_x % 2
-      @registers.set(register_x, value_x / 2)
-      @pc += Const::COMMAND_SIZE
-    end
-
     def execute_rsubn(register_x, register_y)
       value_x = @registers.get(register_x)
       value_y = @registers.get(register_y)
       @vf_register = value_y > value_x
       @registers.set(register_x, value_y - value_x)
-      @pc += Const::COMMAND_SIZE
-    end
-
-    def execute_shl(register_x)
-      value_x = @registers.get(register_x)
-      @vf_register = value_x * 2 > 0xFFFF
-      @registers.set(register_x, (value_x * 2) % 0xFFFF)
       @pc += Const::COMMAND_SIZE
     end
 

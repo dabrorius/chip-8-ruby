@@ -76,12 +76,8 @@ class Executor
       execute_radd(x, y)
     in [8, x, y, 5] # 8XY5 | RSUB | subtract registers X and Y and store results in X
       execute_rsub(x, y)
-    in [8, x, y, 6] # 8XY6 | SHR | does bitwise XOR on registers X and Y and stores result in X
-      execute_shr(x)
     in [8, x, y, 7] # 8XY7 | RSUBN | subtract registers Y and X and store results in X
       execute_rsubn(x, y)
-    in [8, x, y, 0xE] # 8XY5 | SHL | subtract registers X and Y and store results in X
-      execute_shl(x)
     in [0xF, x, 5, 5] # FX55 | WDI | writes registers V0 to Vx to memory locations starting at I register
       execute_wdi(x)
     in [0xF, x, 6, 5] # FX65 | LDI | loads registers V0 to Vx with values from memory location in I register

@@ -87,21 +87,5 @@ module Commands
       end
       @pc += Const::COMMAND_SIZE
     end
-
-    def execute_bcd(register_x)
-      register_value = @registers.get(register_x)
-
-      hundreds = register_value / 100
-      tens = (register_value / 10) % 10
-      ones = register_value % 10
-
-      puts "GOT #{register_value} => #{hundreds} #{tens} #{ones}"
-
-      @memory[@index_register] = ["0#{hundreds.to_s(16)}"].pack("H*")
-      @memory[@index_register + 1] = ["0#{tens.to_s(16)}"].pack("H*")
-      @memory[@index_register + 2] = ["0#{ones.to_s(16)}"].pack("H*")
-
-      @pc += Const::COMMAND_SIZE
-    end
   end
 end

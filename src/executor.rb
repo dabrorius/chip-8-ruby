@@ -92,8 +92,6 @@ class Executor
       execute_wdi(x)
     in [0xF, x, 6, 5] # FX65 | LDI | loads registers V0 to Vx with values from memory location in I register
       execute_ldi(x)
-    in [0xF, x, 3, 3] # FX33 | BCD | loads registers V0 to Vx with values from memory location in I register
-      execute_bcd(x)
     else
       parser_results = @command_parsers.map do |parser|
         parser.match_and_call(command_hex_array)

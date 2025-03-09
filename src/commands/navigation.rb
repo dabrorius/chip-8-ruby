@@ -7,11 +7,6 @@ require_relative "../const"
 #
 module Commands
   module Navigation
-    def execute_call(position)
-      @stack_pointer.push(@pc)
-      @pc = position
-    end
-
     def execute_ret
       # For now set PC to nil to indicate end of program
       if @stack_pointer.any?

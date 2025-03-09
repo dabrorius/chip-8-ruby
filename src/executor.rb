@@ -11,7 +11,7 @@ class Executor
   include Commands::RegisterManipulation
 
   attr_reader :registers, :display
-  attr_accessor :pc, :index_register, :vf_register, :memory
+  attr_accessor :pc, :index_register, :vf_register, :memory, :stack_pointer
 
   def initialize
     @registers = Registers.new
@@ -76,8 +76,6 @@ class Executor
     case command_hex_array
     in [0, 0, 0xE, 0xE] # 00EE | RET | return from subroutine
       execute_ret
-    in [2, n1, n2, n3] # 2NNN | CALL | all subroutine at location NNN
-      execute_call(n1 * 0x100 + n2 * 0x10 + n3)
     in [6, x, n1, n2] # 6XNN | LD | loads register X with value NN
       execute_ld(x, n1 * 0x10 + n2)
     in [7, x, n1, n2] # 7XNN | ADD | adds value NN to register X

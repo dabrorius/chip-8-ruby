@@ -12,7 +12,7 @@ class TestExecutor
     @index_register = index_register
   end
 
-  include Commands::RegisterManipulation
+  include Instructions::RegisterManipulation
 end
 
 class RegistersTest < Minitest::Test

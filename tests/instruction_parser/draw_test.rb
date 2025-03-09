@@ -1,8 +1,8 @@
 require "minitest/autorun"
 require_relative "./test_executor"
-require_relative "../../src/command_parser/draw"
+require_relative "../../src/instruction_parser/draw"
 
-module CommandParser
+module InstructionParser
   class DrawTest < Minitest::Test
     def test_match_and_call
       display_mock = Minitest::Mock.new
@@ -20,13 +20,13 @@ module CommandParser
       executor.registers.set(0, 5)
       executor.registers.set(1, 8)
 
-      command_parser = CommandParser::Draw.new(executor)
+      instruction_parser = InstructionParser::Draw.new(executor)
 
       # Drawing pixels
       display_mock.expect(:toggle_pixel, 0, [11, 8])
       display_mock.expect(:toggle_pixel, 0, [9, 9])
 
-      command_parser.match_and_call([0xD, 0, 1, 2])
+      instruction_parser.match_and_call([0xD, 0, 1, 2])
 
       display_mock.verify
       assert_equal 0, executor.vf_register
@@ -35,7 +35,7 @@ module CommandParser
       # Erasing pixels
       display_mock.expect(:toggle_pixel, 1, [11, 8])
 
-      command_parser.match_and_call([0xD, 0, 1, 1])
+      instruction_parser.match_and_call([0xD, 0, 1, 1])
 
       display_mock.verify
       assert_equal 1, executor.vf_register

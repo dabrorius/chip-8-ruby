@@ -4,7 +4,7 @@ require_relative "./const"
 require_relative "./commands/navigation"
 require_relative "./commands/register_manipulation"
 
-COMMAND_PARSERS_PATH = "./command_parser/".freeze
+INSTRUCTION_PARSERS_PATH = "./instruction_parser/".freeze
 
 class Executor
   include Commands::Navigation
@@ -24,12 +24,12 @@ class Executor
 
     # Dynamically load all command parsers
     # Assume each file contains a class with camel case version of the file name
-    command_parser_files = Dir.glob(File.join(__dir__, COMMAND_PARSERS_PATH, '*.rb'))
+    command_parser_files = Dir.glob(File.join(__dir__, INSTRUCTION_PARSERS_PATH, '*.rb'))
     @command_parsers = command_parser_files.map do |command_parser_path|
       require_relative command_parser_path
       file_name = command_parser_path.split("/").last
       camel_case_name = file_name.gsub(".rb", "").split("_").map(&:capitalize).join
-      Object.const_get("CommandParser::#{camel_case_name}").new(self)
+      Object.const_get("InstructionParser::#{camel_case_name}").new(self)
     end
   end
 

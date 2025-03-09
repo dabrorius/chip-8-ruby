@@ -9,7 +9,7 @@ class TestExecutor
     @stack_pointer = stack_pointer
   end
 
-  include Commands::Navigation
+  include Instructions::Navigation
 end
 
 class RegistersTest < Minitest::Test

@@ -1,6 +1,6 @@
 require_relative "../const"
 
-module CommandParser
+module InstructionParser
   # Format: Dxyn
   # Draws sprite at location Vx, Vy with content from memory starting at I
   class Draw

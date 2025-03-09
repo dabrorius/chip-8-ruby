@@ -1,6 +1,6 @@
 require_relative "../const"
 
-module CommandParser
+module InstructionParser
   # Format: 9xy0
   # Skips next command if register Vx is not equal to register Vy
   class SkipIfRegisterNotEqual

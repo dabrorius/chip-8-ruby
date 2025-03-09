@@ -1,6 +1,6 @@
 require_relative "../const"
 
-module CommandParser
+module InstructionParser
   # Format: 00E0
   # Clears the display
   class ClearDisplay

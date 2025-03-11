@@ -9,14 +9,6 @@ require_relative "../const"
 #
 module Commands
   module RegisterManipulation
-    def execute_rsubn(register_x, register_y)
-      value_x = @registers.get(register_x)
-      value_y = @registers.get(register_y)
-      @vf_register = value_y > value_x
-      @registers.set(register_x, value_y - value_x)
-      @pc += Const::COMMAND_SIZE
-    end
-
     def execute_ldi(last_register)
       (0..last_register).each do |n|
         memory_position = @index_register + n

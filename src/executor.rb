@@ -74,8 +74,6 @@ class Executor
     case command_hex_array
     in [0xF, x, 5, 5] # FX55 | WDI | writes registers V0 to Vx to memory locations starting at I register
       execute_wdi(x)
-    in [0xF, x, 6, 5] # FX65 | LDI | loads registers V0 to Vx with values from memory location in I register
-      execute_ldi(x)
     else
       parser_results = @command_parsers.map do |parser|
         parser.match_and_call(command_hex_array)

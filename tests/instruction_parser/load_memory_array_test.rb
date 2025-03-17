@@ -3,7 +3,7 @@ require_relative "./test_executor"
 require_relative "../../src/instruction_parser/load_memory_array"
 
 module InstructionParser
-  class LoadLiteralTest < Minitest::Test
+  class LoadMemoryArrayTest < Minitest::Test
     def test_match_and_call
       executor = TestExecutor.new(memory: "\xAA\xBB\xCC\xDD\xEE".b, index_register: 2)
       instruction_parser = InstructionParser::LoadMemoryArray.new(executor)

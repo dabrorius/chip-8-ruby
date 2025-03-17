@@ -1,13 +1,10 @@
 require_relative "./registers"
 require_relative "./display"
 require_relative "./const"
-require_relative "./commands/register_manipulation"
 
 INSTRUCTION_PARSERS_PATH = "./instruction_parser/".freeze
 
 class Executor
-  include Commands::RegisterManipulation
-
   attr_reader :registers, :display
   attr_accessor :pc, :index_register, :vf_register, :memory, :stack_pointer
 
@@ -71,17 +68,12 @@ class Executor
   def execute_current_command
     command_hex_array = current_command.unpack("H*").first.chars.map { |digit| digit.to_i(16) }
 
-    case command_hex_array
-    in [0xF, x, 5, 5] # FX55 | WDI | writes registers V0 to Vx to memory locations starting at I register
-      execute_wdi(x)
-    else
-      parser_results = @command_parsers.map do |parser|
-        parser.match_and_call(command_hex_array)
-      end
+    parser_results = @command_parsers.map do |parser|
+      parser.match_and_call(command_hex_array)
+    end
 
-      if parser_results.all? { |e| e == false }
-        fail "Reached unknown command #{command_hex_array.map { |n| n.to_s(16).upcase }.join }"
-      end
+    if parser_results.all? { |e| e == false }
+      fail "Reached unknown command #{command_hex_array.map { |n| n.to_s(16).upcase }.join }"
     end
   end
 

@@ -35,11 +35,9 @@ class Executor
   end
 
   def step
-    if @delay_register > 0
-      @delay_register -= 1
-    else
-      execute_current_command
-    end
+    @delay_register -= 1 if @delay_register > 0
+    
+    execute_current_command
   end
 
   def can_step?

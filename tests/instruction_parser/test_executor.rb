@@ -3,9 +3,10 @@ require_relative "../../src/registers"
 
 class TestExecutor
   attr_reader :registers, :display
-  attr_accessor :pc, :index_register, :memory, :vf_register, :stack_pointer, :delay_register
+  attr_accessor :pc, :index_register, :memory, :vf_register, :stack_pointer, :delay_register,
+                :keys_down
 
-  def initialize(display: nil, memory: "".b, index_register: 0, stack_pointer: [], delay_register: 0)
+  def initialize(display: nil, memory: "".b, index_register: 0, stack_pointer: [], delay_register: 0, keys_down: [])
     @pc = Const::LOAD_PROGRAM_ADDRESS
     @registers = Registers.new
     @memory = memory
@@ -14,5 +15,6 @@ class TestExecutor
     @stack_pointer = stack_pointer
     @display = display
     @delay_register = delay_register
+    @keys_down = keys_down
   end
 end

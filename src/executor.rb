@@ -6,7 +6,8 @@ INSTRUCTION_PARSERS_PATH = "./instruction_parser/".freeze
 
 class Executor
   attr_reader :registers, :display
-  attr_accessor :pc, :index_register, :vf_register, :memory, :stack_pointer, :delay_register
+  attr_accessor :pc, :index_register, :vf_register, :memory, :stack_pointer,
+                :delay_register, :keys_down
 
   def initialize
     @registers = Registers.new
@@ -17,6 +18,7 @@ class Executor
     @stack_pointer = []
     @vf_register = 0
     @delay_register = 0
+    @keys_down = []
 
     # Dynamically load all command parsers
     # Assume each file contains a class with camel case version of the file name

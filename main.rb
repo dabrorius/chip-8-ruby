@@ -15,9 +15,58 @@ class Chip8 < Gosu::Window
 
     @executor = Executor.new
     @executor.load_program(rom_content)
+
+    @keys_down = []    
+  end
+
+  def button_down(id)
+    value = case id
+      when Gosu::KB_1 then 1
+      when Gosu::KB_2 then 2
+      when Gosu::KB_3 then 3
+      when Gosu::KB_4 then 4
+      when Gosu::KB_5 then 5
+      when Gosu::KB_6 then 6
+      when Gosu::KB_7 then 7
+      when Gosu::KB_8 then 8
+      when Gosu::KB_9 then 9
+      when Gosu::KB_0 then 0
+      when Gosu::KB_A then 0xA
+      when Gosu::KB_B then 0xB
+      when Gosu::KB_C then 0xC
+      when Gosu::KB_D then 0xD
+      when Gosu::KB_E then 0xE
+      when Gosu::KB_F then 0xF
+    end
+
+    @keys_down << value unless @keys_down.include?(value)
+  end
+
+  def button_up(id)
+    value = case id
+      when Gosu::KB_1 then 1
+      when Gosu::KB_2 then 2
+      when Gosu::KB_3 then 3
+      when Gosu::KB_4 then 4
+      when Gosu::KB_5 then 5
+      when Gosu::KB_6 then 6
+      when Gosu::KB_7 then 7
+      when Gosu::KB_8 then 8
+      when Gosu::KB_9 then 9
+      when Gosu::KB_0 then 0
+      when Gosu::KB_A then 0xA
+      when Gosu::KB_B then 0xB
+      when Gosu::KB_C then 0xC
+      when Gosu::KB_D then 0xD
+      when Gosu::KB_E then 0xE
+      when Gosu::KB_F then 0xF
+    end
+
+    @keys_down.delete(value)
   end
 
   def update
+    @executor.keys_down = @keys_down
     @executor.step if @executor.can_step?
   end
 

@@ -1,6 +1,6 @@
 require "minitest/autorun"
 require_relative "./test_executor"
-require_relative "../../src/instruction_parser/load_memory_array"
+require_relative "../../src/instruction_parser/store_memory_array"
 
 module InstructionParser
   class StoreMemoryArrayTest < Minitest::Test
